@@ -46,7 +46,9 @@ class FuelEntry {
     return FuelEntry(
       id: map[kFuelEntryFieldId]?.toString() ?? '',
       vehicleId: map[kFuelEntryFieldVehicleId]?.toString() ?? '',
-      date: DateTime.tryParse(map[kFuelEntryFieldDate]?.toString() ?? '') ?? DateTime.now(),
+      date:
+          DateTime.tryParse(map[kFuelEntryFieldDate]?.toString() ?? '') ??
+          DateTime.now(),
       litres: (map[kFuelEntryFieldLitres] as num?)?.toDouble() ?? 0.0,
       montant: (map[kFuelEntryFieldMontant] as num?)?.toDouble() ?? 0.0,
       kilometrage: (map[kFuelEntryFieldKilometrage] as num?)?.toDouble() ?? 0.0,

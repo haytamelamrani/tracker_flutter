@@ -46,7 +46,9 @@ class Maintenance {
     return Maintenance(
       id: map[kMaintenanceFieldId]?.toString() ?? '',
       vehicleId: map[kMaintenanceFieldVehicleId]?.toString() ?? '',
-      date: DateTime.tryParse(map[kMaintenanceFieldDate]?.toString() ?? '') ?? DateTime.now(),
+      date:
+          DateTime.tryParse(map[kMaintenanceFieldDate]?.toString() ?? '') ??
+          DateTime.now(),
       categoryId: map[kMaintenanceFieldCategoryId]?.toString() ?? '',
       description: map[kMaintenanceFieldDescription]?.toString() ?? '',
       cout: (map[kMaintenanceFieldCout] as num?)?.toDouble() ?? 0.0,
