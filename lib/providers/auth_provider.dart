@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -59,6 +61,7 @@ class AuthError extends AuthState {
 /// l'état synchronisé automatiquement.
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthService _authService;
+  StreamSubscription<User?>? _authSubscription;
 
   AuthNotifier(this._authService) : super(const AuthLoading()) {
     _listenAuthChanges();
@@ -66,7 +69,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   /// Écoute les changements d'état Firebase Auth en temps réel.
   void _listenAuthChanges() {
-    _authService.authStateChanges.listen(
+    _authSubscription = _authService.authStateChanges.listen(
       (user) {
         if (user != null) {
           state = AuthAuthenticated(user);
@@ -78,6 +81,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = AuthError(error.toString());
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
   }
 
   /// Inscription par email/password.
