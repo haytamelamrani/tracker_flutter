@@ -5,6 +5,7 @@ import '../domain/models/vehicle.dart';
 import '../providers/auth_provider.dart';
 import '../providers/expense_provider.dart';
 import '../providers/vehicle_provider.dart';
+import 'widgets/add_dialogs.dart';
 
 // =============================================================================
 // Palette locale
@@ -121,9 +122,24 @@ class DashboardPage extends ConsumerWidget {
                   const SizedBox(height: 28),
 
                   // ─── Vehicles ───────────────────────────────────────
-                  Text(
-                    'Mes véhicules',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Mes véhicules',
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _kAccentBlue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () => showAddVehicleDialog(context, ref),
+                        icon: const Icon(Icons.add_rounded, size: 20),
+                        label: const Text('Ajouter'),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
 
@@ -813,6 +829,28 @@ class _VehicleCard extends ConsumerWidget {
                   ],
                 );
               },
+            ),
+          ),
+
+          // ACTIONS
+          const Divider(height: 1, color: _kBorder),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () => showAddMaintenanceDialog(context, ref, vehicle.id),
+                  icon: const Icon(Icons.build_rounded, size: 16, color: _kOrange),
+                  label: const Text('Maintenance', style: TextStyle(color: _kOrange)),
+                ),
+                const SizedBox(width: 8),
+                TextButton.icon(
+                  onPressed: () => showAddFuelDialog(context, ref, vehicle.id),
+                  icon: const Icon(Icons.local_gas_station_rounded, size: 16, color: _kAccentBlue),
+                  label: const Text('Gasoil', style: TextStyle(color: _kAccentBlue)),
+                ),
+              ],
             ),
           ),
         ],
