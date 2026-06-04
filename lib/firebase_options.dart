@@ -44,12 +44,13 @@ class DefaultFirebaseOptions {
   // Web
   // ---------------------------------------------------------------------------
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'TODO_YOUR_WEB_API_KEY',
-    appId: 'TODO_YOUR_WEB_APP_ID',
-    messagingSenderId: 'TODO_YOUR_MESSAGING_SENDER_ID',
-    projectId: 'TODO_YOUR_PROJECT_ID',
-    authDomain: 'TODO_YOUR_PROJECT_ID.firebaseapp.com',
-    storageBucket: 'TODO_YOUR_PROJECT_ID.firebasestorage.app',
+    apiKey: 'AIzaSyBP95cEe0-X0NKv7SjDHFYLpIndaSGV4Fk',
+    appId: '1:103464223440:web:8e5182a9c5d726219394d5',
+    messagingSenderId: '103464223440',
+    projectId: 'tracker-flutter-f90fd',
+    authDomain: 'tracker-flutter-f90fd.firebaseapp.com',
+    storageBucket: 'tracker-flutter-f90fd.firebasestorage.app',
+    measurementId: 'G-CY0CMCSTT7',
   );
 
   // ---------------------------------------------------------------------------
