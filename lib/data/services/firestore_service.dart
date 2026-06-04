@@ -16,7 +16,7 @@ class FirestoreService {
 
   /// Permet l'injection de dépendance pour les tests.
   FirestoreService({FirebaseFirestore? firestore})
-      : _db = firestore ?? FirebaseFirestore.instance;
+    : _db = firestore ?? FirebaseFirestore.instance;
 
   // -------------------------------------------------------------------------
   // Helpers — références de sous-collections scopées par userId
@@ -37,11 +37,10 @@ class FirestoreService {
   /// Référence à la sous-collection des catégories de maintenance.
   CollectionReference<Map<String, dynamic>> _maintenanceCategoriesRef(
     String userId,
-  ) =>
-      _db
-          .collection('users')
-          .doc(userId)
-          .collection(kMaintenanceCategoriesCollection);
+  ) => _db
+      .collection('users')
+      .doc(userId)
+      .collection(kMaintenanceCategoriesCollection);
 
   // =========================================================================
   // VEHICLE — CRUD
@@ -65,20 +64,20 @@ class FirestoreService {
   Future<Vehicle?> getVehicle(String userId, String vehicleId) async {
     final doc = await _vehiclesRef(userId).doc(vehicleId).get();
     if (!doc.exists || doc.data() == null) return null;
-    return Vehicle.fromMap(doc.data()!);
+    return _vehicleFromDocument(doc);
   }
 
   /// Retourne la liste de tous les véhicules du client.
   Future<List<Vehicle>> getVehicles(String userId) async {
     final snapshot = await _vehiclesRef(userId).get();
-    return snapshot.docs.map((d) => Vehicle.fromMap(d.data())).toList();
+    return snapshot.docs.map(_vehicleFromDocument).toList();
   }
 
   /// Stream réactif de tous les véhicules du client.
   Stream<List<Vehicle>> watchVehicles(String userId) {
-    return _vehiclesRef(userId).snapshots().map(
-          (snap) => snap.docs.map((d) => Vehicle.fromMap(d.data())).toList(),
-        );
+    return _vehiclesRef(
+      userId,
+    ).snapshots().map((snap) => snap.docs.map(_vehicleFromDocument).toList());
   }
 
   /// Met à jour un véhicule existant.
@@ -106,7 +105,9 @@ class FirestoreService {
       montant: entry.montant,
       kilometrage: entry.kilometrage,
     );
-    await docRef.set(created.toMap());
+    await docRef.set(
+      _firestoreData(created.toMap(), dateFields: [kFuelEntryFieldDate]),
+    );
     return created;
   }
 
@@ -114,13 +115,13 @@ class FirestoreService {
   Future<FuelEntry?> getFuelEntry(String userId, String entryId) async {
     final doc = await _fuelEntriesRef(userId).doc(entryId).get();
     if (!doc.exists || doc.data() == null) return null;
-    return FuelEntry.fromMap(doc.data()!);
+    return _fuelEntryFromDocument(doc);
   }
 
   /// Retourne toutes les entrées carburant du client.
   Future<List<FuelEntry>> getFuelEntries(String userId) async {
     final snapshot = await _fuelEntriesRef(userId).get();
-    return snapshot.docs.map((d) => FuelEntry.fromMap(d.data())).toList();
+    return snapshot.docs.map(_fuelEntryFromDocument).toList();
   }
 
   /// Retourne les entrées carburant d'un véhicule spécifique.
@@ -132,7 +133,7 @@ class FirestoreService {
         .where(kFuelEntryFieldVehicleId, isEqualTo: vehicleId)
         .orderBy(kFuelEntryFieldDate, descending: true)
         .get();
-    return snapshot.docs.map((d) => FuelEntry.fromMap(d.data())).toList();
+    return snapshot.docs.map(_fuelEntryFromDocument).toList();
   }
 
   /// Stream réactif des entrées carburant d'un véhicule.
@@ -144,14 +145,16 @@ class FirestoreService {
         .where(kFuelEntryFieldVehicleId, isEqualTo: vehicleId)
         .orderBy(kFuelEntryFieldDate, descending: true)
         .snapshots()
-        .map(
-          (snap) => snap.docs.map((d) => FuelEntry.fromMap(d.data())).toList(),
-        );
+        .map((snap) => snap.docs.map(_fuelEntryFromDocument).toList());
   }
 
   /// Met à jour une entrée carburant existante.
   Future<void> updateFuelEntry(String userId, FuelEntry entry) async {
-    await _fuelEntriesRef(userId).doc(entry.id).update(entry.toMap());
+    await _fuelEntriesRef(userId)
+        .doc(entry.id)
+        .update(
+          _firestoreData(entry.toMap(), dateFields: [kFuelEntryFieldDate]),
+        );
   }
 
   /// Supprime une entrée carburant par son [entryId].
@@ -177,7 +180,9 @@ class FirestoreService {
       description: maintenance.description,
       cout: maintenance.cout,
     );
-    await docRef.set(created.toMap());
+    await docRef.set(
+      _firestoreData(created.toMap(), dateFields: [kMaintenanceFieldDate]),
+    );
     return created;
   }
 
@@ -188,13 +193,13 @@ class FirestoreService {
   ) async {
     final doc = await _maintenancesRef(userId).doc(maintenanceId).get();
     if (!doc.exists || doc.data() == null) return null;
-    return Maintenance.fromMap(doc.data()!);
+    return _maintenanceFromDocument(doc);
   }
 
   /// Retourne toutes les maintenances du client.
   Future<List<Maintenance>> getMaintenances(String userId) async {
     final snapshot = await _maintenancesRef(userId).get();
-    return snapshot.docs.map((d) => Maintenance.fromMap(d.data())).toList();
+    return snapshot.docs.map(_maintenanceFromDocument).toList();
   }
 
   /// Retourne les maintenances d'un véhicule spécifique.
@@ -206,7 +211,7 @@ class FirestoreService {
         .where(kMaintenanceFieldVehicleId, isEqualTo: vehicleId)
         .orderBy(kMaintenanceFieldDate, descending: true)
         .get();
-    return snapshot.docs.map((d) => Maintenance.fromMap(d.data())).toList();
+    return snapshot.docs.map(_maintenanceFromDocument).toList();
   }
 
   /// Stream réactif des maintenances d'un véhicule.
@@ -218,27 +223,23 @@ class FirestoreService {
         .where(kMaintenanceFieldVehicleId, isEqualTo: vehicleId)
         .orderBy(kMaintenanceFieldDate, descending: true)
         .snapshots()
-        .map(
-          (snap) =>
-              snap.docs.map((d) => Maintenance.fromMap(d.data())).toList(),
-        );
+        .map((snap) => snap.docs.map(_maintenanceFromDocument).toList());
   }
 
   /// Met à jour une maintenance existante.
-  Future<void> updateMaintenance(
-    String userId,
-    Maintenance maintenance,
-  ) async {
+  Future<void> updateMaintenance(String userId, Maintenance maintenance) async {
     await _maintenancesRef(userId)
         .doc(maintenance.id)
-        .update(maintenance.toMap());
+        .update(
+          _firestoreData(
+            maintenance.toMap(),
+            dateFields: [kMaintenanceFieldDate],
+          ),
+        );
   }
 
   /// Supprime une maintenance par son [maintenanceId].
-  Future<void> deleteMaintenance(
-    String userId,
-    String maintenanceId,
-  ) async {
+  Future<void> deleteMaintenance(String userId, String maintenanceId) async {
     await _maintenancesRef(userId).doc(maintenanceId).delete();
   }
 
@@ -262,20 +263,14 @@ class FirestoreService {
     String userId,
   ) async {
     final snapshot = await _maintenanceCategoriesRef(userId).get();
-    return snapshot.docs
-        .map((d) => MaintenanceCategory.fromMap(d.data()))
-        .toList();
+    return snapshot.docs.map(_maintenanceCategoryFromDocument).toList();
   }
 
   /// Stream réactif des catégories de maintenance.
-  Stream<List<MaintenanceCategory>> watchMaintenanceCategories(
-    String userId,
-  ) {
+  Stream<List<MaintenanceCategory>> watchMaintenanceCategories(String userId) {
     return _maintenanceCategoriesRef(userId).snapshots().map(
-          (snap) => snap.docs
-              .map((d) => MaintenanceCategory.fromMap(d.data()))
-              .toList(),
-        );
+      (snap) => snap.docs.map(_maintenanceCategoryFromDocument).toList(),
+    );
   }
 
   /// Met à jour une catégorie de maintenance existante.
@@ -283,9 +278,9 @@ class FirestoreService {
     String userId,
     MaintenanceCategory category,
   ) async {
-    await _maintenanceCategoriesRef(userId)
-        .doc(category.id)
-        .update(category.toMap());
+    await _maintenanceCategoriesRef(
+      userId,
+    ).doc(category.id).update(category.toMap());
   }
 
   /// Supprime une catégorie de maintenance par son [categoryId].
@@ -294,5 +289,64 @@ class FirestoreService {
     String categoryId,
   ) async {
     await _maintenanceCategoriesRef(userId).doc(categoryId).delete();
+  }
+
+  Vehicle _vehicleFromDocument(DocumentSnapshot<Map<String, dynamic>> doc) {
+    return Vehicle.fromMap(_documentData(doc, kVehicleFieldId));
+  }
+
+  FuelEntry _fuelEntryFromDocument(DocumentSnapshot<Map<String, dynamic>> doc) {
+    return FuelEntry.fromMap(_documentData(doc, kFuelEntryFieldId));
+  }
+
+  Maintenance _maintenanceFromDocument(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
+    return Maintenance.fromMap(_documentData(doc, kMaintenanceFieldId));
+  }
+
+  MaintenanceCategory _maintenanceCategoryFromDocument(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
+    return MaintenanceCategory.fromMap(
+      _documentData(doc, kMaintenanceCategoryFieldId),
+    );
+  }
+
+  Map<String, dynamic> _documentData(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+    String idField,
+  ) {
+    final data = Map<String, dynamic>.from(doc.data() ?? const {});
+    data.putIfAbsent(idField, () => doc.id);
+    return data.map(
+      (key, value) => MapEntry(key, _normalizeFirestoreValue(value)),
+    );
+  }
+
+  Object? _normalizeFirestoreValue(Object? value) {
+    if (value is Timestamp) {
+      return value.toDate().toIso8601String();
+    }
+    return value;
+  }
+
+  Map<String, dynamic> _firestoreData(
+    Map<String, dynamic> data, {
+    List<String> dateFields = const [],
+  }) {
+    final normalized = Map<String, dynamic>.from(data);
+    for (final field in dateFields) {
+      final value = normalized[field];
+      if (value is DateTime) {
+        normalized[field] = Timestamp.fromDate(value);
+      } else if (value is String) {
+        final parsedDate = DateTime.tryParse(value);
+        if (parsedDate != null) {
+          normalized[field] = Timestamp.fromDate(parsedDate);
+        }
+      }
+    }
+    return normalized;
   }
 }

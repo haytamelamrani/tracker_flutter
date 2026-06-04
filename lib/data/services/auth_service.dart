@@ -10,7 +10,7 @@ class AuthService {
 
   /// Permet l'injection de dépendance pour les tests.
   AuthService({FirebaseAuth? firebaseAuth})
-      : _auth = firebaseAuth ?? FirebaseAuth.instance;
+    : _auth = firebaseAuth ?? FirebaseAuth.instance;
 
   // -------------------------------------------------------------------------
   // Getters
@@ -66,10 +66,7 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    return _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   // -------------------------------------------------------------------------

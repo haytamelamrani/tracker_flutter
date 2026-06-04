@@ -129,11 +129,11 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
                       Text(
                         'Tracker Fleet',
-                        style:
-                            Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.5,
-                                ),
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.5,
+                            ),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -152,9 +152,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           decoration: BoxDecoration(
                             color: const Color(0xFFFEF2F2),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color(0xFFFECACA),
-                            ),
+                            border: Border.all(color: const Color(0xFFFECACA)),
                           ),
                           child: Row(
                             children: [
@@ -249,8 +247,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                         width: double.infinity,
                         height: 52,
                         child: ElevatedButton(
-                          onPressed:
-                              authState is AuthLoading ? null : _submit,
+                          onPressed: authState is AuthLoading ? null : _submit,
                           child: authState is AuthLoading
                               ? const SizedBox(
                                   width: 22,
@@ -261,7 +258,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                   ),
                                 )
                               : Text(
-                                  _isSignUp ? 'Créer le compte' : 'Se connecter',
+                                  _isSignUp
+                                      ? 'Créer le compte'
+                                      : 'Se connecter',
                                 ),
                         ),
                       ),

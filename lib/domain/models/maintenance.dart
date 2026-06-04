@@ -44,12 +44,12 @@ class Maintenance {
   /// Crée une instance de [Maintenance] à partir d'une [Map] Firestore.
   factory Maintenance.fromMap(Map<String, dynamic> map) {
     return Maintenance(
-      id: map[kMaintenanceFieldId] as String,
-      vehicleId: map[kMaintenanceFieldVehicleId] as String,
-      date: DateTime.parse(map[kMaintenanceFieldDate] as String),
-      categoryId: map[kMaintenanceFieldCategoryId] as String,
-      description: map[kMaintenanceFieldDescription] as String,
-      cout: (map[kMaintenanceFieldCout] as num).toDouble(),
+      id: map[kMaintenanceFieldId]?.toString() ?? '',
+      vehicleId: map[kMaintenanceFieldVehicleId]?.toString() ?? '',
+      date: DateTime.tryParse(map[kMaintenanceFieldDate]?.toString() ?? '') ?? DateTime.now(),
+      categoryId: map[kMaintenanceFieldCategoryId]?.toString() ?? '',
+      description: map[kMaintenanceFieldDescription]?.toString() ?? '',
+      cout: (map[kMaintenanceFieldCout] as num?)?.toDouble() ?? 0.0,
     );
   }
 

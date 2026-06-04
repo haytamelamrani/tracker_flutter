@@ -8,17 +8,11 @@ class MaintenanceCategory {
   /// Nom de la catégorie.
   final String nom;
 
-  const MaintenanceCategory({
-    required this.id,
-    required this.nom,
-  });
+  const MaintenanceCategory({required this.id, required this.nom});
 
   /// Convertit l'instance en [Map] pour Firestore.
   Map<String, dynamic> toMap() {
-    return {
-      kMaintenanceCategoryFieldId: id,
-      kMaintenanceCategoryFieldNom: nom,
-    };
+    return {kMaintenanceCategoryFieldId: id, kMaintenanceCategoryFieldNom: nom};
   }
 
   /// Crée une instance de [MaintenanceCategory] à partir d'une [Map] Firestore.
@@ -35,9 +29,7 @@ class MaintenanceCategory {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is MaintenanceCategory &&
-        other.id == id &&
-        other.nom == nom;
+    return other is MaintenanceCategory && other.id == id && other.nom == nom;
   }
 
   @override

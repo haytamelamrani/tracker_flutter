@@ -103,12 +103,12 @@ final allFuelEntriesProvider = FutureProvider<List<FuelEntry>>((ref) async {
 /// Entrées carburant d'un véhicule spécifique.
 final fuelEntriesByVehicleProvider =
     FutureProvider.family<List<FuelEntry>, String>((ref, vehicleId) async {
-  final userId = ref.watch(currentUserIdProvider);
-  if (userId == null) return [];
+      final userId = ref.watch(currentUserIdProvider);
+      if (userId == null) return [];
 
-  final firestoreService = ref.watch(firestoreServiceProvider);
-  return firestoreService.getFuelEntriesByVehicle(userId, vehicleId);
-});
+      final firestoreService = ref.watch(firestoreServiceProvider);
+      return firestoreService.getFuelEntriesByVehicle(userId, vehicleId);
+    });
 
 // =============================================================================
 // Dépenses mensuelles par véhicule
@@ -119,52 +119,51 @@ final fuelEntriesByVehicleProvider =
 /// Agrège les montants de gasoil et de maintenance par mois (clé « YYYY-MM »),
 /// triés du plus récent au plus ancien.
 final monthlyExpensesByVehicleProvider =
-    FutureProvider.family<List<MonthlyExpense>, String>(
-  (ref, vehicleId) async {
-    final userId = ref.watch(currentUserIdProvider);
-    if (userId == null) return [];
+    FutureProvider.family<List<MonthlyExpense>, String>((ref, vehicleId) async {
+      final userId = ref.watch(currentUserIdProvider);
+      if (userId == null) return [];
 
-    final firestoreService = ref.watch(firestoreServiceProvider);
+      final firestoreService = ref.watch(firestoreServiceProvider);
 
-    // Chargement parallèle des données.
-    final results = await Future.wait([
-      firestoreService.getFuelEntriesByVehicle(userId, vehicleId),
-      firestoreService.getMaintenancesByVehicle(userId, vehicleId),
-    ]);
+      // Chargement parallèle des données.
+      final results = await Future.wait([
+        firestoreService.getFuelEntriesByVehicle(userId, vehicleId),
+        firestoreService.getMaintenancesByVehicle(userId, vehicleId),
+      ]);
 
-    final fuelEntries = results[0] as List<FuelEntry>;
-    final maintenances = results[1] as List<Maintenance>;
+      final fuelEntries = results[0] as List<FuelEntry>;
+      final maintenances = results[1] as List<Maintenance>;
 
-    // Agrégation par mois.
-    final Map<String, _MutableExpense> monthMap = {};
+      // Agrégation par mois.
+      final Map<String, _MutableExpense> monthMap = {};
 
-    for (final entry in fuelEntries) {
-      final key = _monthKey(entry.date);
-      monthMap.putIfAbsent(key, _MutableExpense.new);
-      monthMap[key]!.fuel += entry.montant;
-    }
+      for (final entry in fuelEntries) {
+        final key = _monthKey(entry.date);
+        monthMap.putIfAbsent(key, _MutableExpense.new);
+        monthMap[key]!.fuel += entry.montant;
+      }
 
-    for (final m in maintenances) {
-      final key = _monthKey(m.date);
-      monthMap.putIfAbsent(key, _MutableExpense.new);
-      monthMap[key]!.maintenance += m.cout;
-    }
+      for (final m in maintenances) {
+        final key = _monthKey(m.date);
+        monthMap.putIfAbsent(key, _MutableExpense.new);
+        monthMap[key]!.maintenance += m.cout;
+      }
 
-    // Conversion et tri décroissant.
-    final expenses = monthMap.entries
-        .map(
-          (e) => MonthlyExpense(
-            month: e.key,
-            totalFuel: e.value.fuel,
-            totalMaintenance: e.value.maintenance,
-          ),
-        )
-        .toList()
-      ..sort((a, b) => b.month.compareTo(a.month));
+      // Conversion et tri décroissant.
+      final expenses =
+          monthMap.entries
+              .map(
+                (e) => MonthlyExpense(
+                  month: e.key,
+                  totalFuel: e.value.fuel,
+                  totalMaintenance: e.value.maintenance,
+                ),
+              )
+              .toList()
+            ..sort((a, b) => b.month.compareTo(a.month));
 
-    return expenses;
-  },
-);
+      return expenses;
+    });
 
 // =============================================================================
 // Répartition budgétaire globale
@@ -210,36 +209,36 @@ final budgetBreakdownProvider = FutureProvider<BudgetBreakdown>((ref) async {
 /// Répartition budgétaire pour un véhicule spécifique.
 final budgetBreakdownByVehicleProvider =
     FutureProvider.family<BudgetBreakdown, String>((ref, vehicleId) async {
-  final userId = ref.watch(currentUserIdProvider);
-  if (userId == null) {
-    return const BudgetBreakdown(actualFuel: 0, actualMaintenance: 0);
-  }
+      final userId = ref.watch(currentUserIdProvider);
+      if (userId == null) {
+        return const BudgetBreakdown(actualFuel: 0, actualMaintenance: 0);
+      }
 
-  final firestoreService = ref.watch(firestoreServiceProvider);
+      final firestoreService = ref.watch(firestoreServiceProvider);
 
-  final results = await Future.wait([
-    firestoreService.getFuelEntriesByVehicle(userId, vehicleId),
-    firestoreService.getMaintenancesByVehicle(userId, vehicleId),
-  ]);
+      final results = await Future.wait([
+        firestoreService.getFuelEntriesByVehicle(userId, vehicleId),
+        firestoreService.getMaintenancesByVehicle(userId, vehicleId),
+      ]);
 
-  final fuelEntries = results[0] as List<FuelEntry>;
-  final maintenances = results[1] as List<Maintenance>;
+      final fuelEntries = results[0] as List<FuelEntry>;
+      final maintenances = results[1] as List<Maintenance>;
 
-  final totalFuel = fuelEntries.fold<double>(
-    0,
-    (sum, entry) => sum + entry.montant,
-  );
+      final totalFuel = fuelEntries.fold<double>(
+        0,
+        (sum, entry) => sum + entry.montant,
+      );
 
-  final totalMaintenance = maintenances.fold<double>(
-    0,
-    (sum, m) => sum + m.cout,
-  );
+      final totalMaintenance = maintenances.fold<double>(
+        0,
+        (sum, m) => sum + m.cout,
+      );
 
-  return BudgetBreakdown(
-    actualFuel: totalFuel,
-    actualMaintenance: totalMaintenance,
-  );
-});
+      return BudgetBreakdown(
+        actualFuel: totalFuel,
+        actualMaintenance: totalMaintenance,
+      );
+    });
 
 // =============================================================================
 // Helpers privés

@@ -30,8 +30,10 @@ final vehiclesStreamProvider = StreamProvider<List<Vehicle>>((ref) {
 });
 
 /// Provider family pour récupérer un véhicule par son ID.
-final vehicleByIdProvider =
-    FutureProvider.family<Vehicle?, String>((ref, vehicleId) async {
+final vehicleByIdProvider = FutureProvider.family<Vehicle?, String>((
+  ref,
+  vehicleId,
+) async {
   final userId = ref.watch(currentUserIdProvider);
   if (userId == null) return null;
 

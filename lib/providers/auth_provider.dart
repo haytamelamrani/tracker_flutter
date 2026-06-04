@@ -90,10 +90,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// Inscription par email/password.
-  Future<void> signUp({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signUp({required String email, required String password}) async {
     state = const AuthLoading();
     try {
       await _authService.signUp(email: email, password: password);
@@ -104,10 +101,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// Connexion par email/password.
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signIn({required String email, required String password}) async {
     state = const AuthLoading();
     try {
       await _authService.signIn(email: email, password: password);

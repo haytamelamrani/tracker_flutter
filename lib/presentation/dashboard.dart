@@ -47,8 +47,10 @@ class DashboardPage extends ConsumerWidget {
             child: Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
@@ -72,8 +74,7 @@ class DashboardPage extends ConsumerWidget {
                 IconButton(
                   icon: const Icon(Icons.logout_rounded, size: 20),
                   tooltip: 'Déconnexion',
-                  onPressed: () =>
-                      ref.read(authProvider.notifier).signOut(),
+                  onPressed: () => ref.read(authProvider.notifier).signOut(),
                 ),
               ],
             ),
@@ -144,21 +145,24 @@ class DashboardPage extends ConsumerWidget {
                           spacing: 16,
                           runSpacing: 16,
                           children: vehicles
-                              .map((v) => SizedBox(
-                                    width:
-                                        (constraints.maxWidth - 96 - 32) / 3,
-                                    child: _VehicleCard(vehicle: v),
-                                  ))
+                              .map(
+                                (v) => SizedBox(
+                                  width: (constraints.maxWidth - 96 - 32) / 3,
+                                  child: _VehicleCard(vehicle: v),
+                                ),
+                              )
                               .toList(),
                         );
                       }
 
                       return Column(
                         children: vehicles
-                            .map((v) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 14),
-                                  child: _VehicleCard(vehicle: v),
-                                ))
+                            .map(
+                              (v) => Padding(
+                                padding: const EdgeInsets.only(bottom: 14),
+                                child: _VehicleCard(vehicle: v),
+                              ),
+                            )
                             .toList(),
                       );
                     },
@@ -404,8 +408,10 @@ class _BudgetBarCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(8),
@@ -490,9 +496,7 @@ class _BudgetBarCard extends StatelessWidget {
                   ),
                   Expanded(
                     flex: 30,
-                    child: Container(
-                      color: _kOrange.withValues(alpha: 0.2),
-                    ),
+                    child: Container(color: _kOrange.withValues(alpha: 0.2)),
                   ),
                 ],
               ),
@@ -509,10 +513,7 @@ class _BudgetBarCard extends StatelessWidget {
               _LegendDot(color: _kOrange, label: 'Maintenance'),
               const Spacer(),
               // Variance indicator
-              _VarianceBadge(
-                label: 'Écart gasoil',
-                value: budget.fuelVariance,
-              ),
+              _VarianceBadge(label: 'Écart gasoil', value: budget.fuelVariance),
             ],
           ),
         ],
@@ -605,8 +606,9 @@ class _VehicleCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final expensesAsync =
-        ref.watch(monthlyExpensesByVehicleProvider(vehicle.id));
+    final expensesAsync = ref.watch(
+      monthlyExpensesByVehicleProvider(vehicle.id),
+    );
     final fuelAsync = ref.watch(fuelEntriesByVehicleProvider(vehicle.id));
 
     return Container(
@@ -630,10 +632,7 @@ class _VehicleCard extends ConsumerWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  _kNavy,
-                  _kNavy.withValues(alpha: 0.9),
-                ],
+                colors: [_kNavy, _kNavy.withValues(alpha: 0.9)],
               ),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
@@ -682,8 +681,10 @@ class _VehicleCard extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
@@ -709,10 +710,7 @@ class _VehicleCard extends ConsumerWidget {
               loading: () => const _MiniLoader(),
               error: (e, _) => Text(
                 'Erreur: $e',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: _kRed,
-                ),
+                style: const TextStyle(fontSize: 12, color: _kRed),
               ),
               data: (entries) {
                 final totalLitres = entries.fold<double>(
@@ -723,8 +721,9 @@ class _VehicleCard extends ConsumerWidget {
                   0,
                   (sum, e) => sum + e.montant,
                 );
-                final avgPrix =
-                    totalLitres > 0 ? totalMontant / totalLitres : 0.0;
+                final avgPrix = totalLitres > 0
+                    ? totalMontant / totalLitres
+                    : 0.0;
 
                 return Row(
                   children: [
@@ -761,10 +760,7 @@ class _VehicleCard extends ConsumerWidget {
               loading: () => const _MiniLoader(),
               error: (e, _) => Text(
                 'Erreur: $e',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: _kRed,
-                ),
+                style: const TextStyle(fontSize: 12, color: _kRed),
               ),
               data: (expenses) {
                 if (expenses.isEmpty) {
@@ -969,10 +965,7 @@ class _ShimmerCard extends StatelessWidget {
         border: Border.all(color: _kBorder),
       ),
       child: const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 2.5,
-          color: _kAccentBlue,
-        ),
+        child: CircularProgressIndicator(strokeWidth: 2.5, color: _kAccentBlue),
       ),
     );
   }
@@ -1081,10 +1074,7 @@ class _MiniLoader extends StatelessWidget {
         child: SizedBox(
           width: 18,
           height: 18,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: _kAccentBlue,
-          ),
+          child: CircularProgressIndicator(strokeWidth: 2, color: _kAccentBlue),
         ),
       ),
     );

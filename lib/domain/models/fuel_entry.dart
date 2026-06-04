@@ -44,12 +44,12 @@ class FuelEntry {
   /// Crée une instance de [FuelEntry] à partir d'une [Map] Firestore.
   factory FuelEntry.fromMap(Map<String, dynamic> map) {
     return FuelEntry(
-      id: map[kFuelEntryFieldId] as String,
-      vehicleId: map[kFuelEntryFieldVehicleId] as String,
-      date: DateTime.parse(map[kFuelEntryFieldDate] as String),
-      litres: (map[kFuelEntryFieldLitres] as num).toDouble(),
-      montant: (map[kFuelEntryFieldMontant] as num).toDouble(),
-      kilometrage: (map[kFuelEntryFieldKilometrage] as num).toDouble(),
+      id: map[kFuelEntryFieldId]?.toString() ?? '',
+      vehicleId: map[kFuelEntryFieldVehicleId]?.toString() ?? '',
+      date: DateTime.tryParse(map[kFuelEntryFieldDate]?.toString() ?? '') ?? DateTime.now(),
+      litres: (map[kFuelEntryFieldLitres] as num?)?.toDouble() ?? 0.0,
+      montant: (map[kFuelEntryFieldMontant] as num?)?.toDouble() ?? 0.0,
+      kilometrage: (map[kFuelEntryFieldKilometrage] as num?)?.toDouble() ?? 0.0,
     );
   }
 

@@ -45,41 +45,40 @@ class MaintenanceFilter {
 /// Utilise [FutureProvider.family] pour paramétrer la requête.
 /// Les états loading / error / data sont gérés automatiquement par Riverpod.
 final maintenancesByVehicleProvider =
-    FutureProvider.family<List<Maintenance>, MaintenanceFilter>(
-  (ref, filter) async {
-    final userId = ref.watch(currentUserIdProvider);
-    if (userId == null) return [];
+    FutureProvider.family<List<Maintenance>, MaintenanceFilter>((
+      ref,
+      filter,
+    ) async {
+      final userId = ref.watch(currentUserIdProvider);
+      if (userId == null) return [];
 
-    final firestoreService = ref.watch(firestoreServiceProvider);
-    final allMaintenances = await firestoreService.getMaintenancesByVehicle(
-      userId,
-      filter.vehicleId,
-    );
+      final firestoreService = ref.watch(firestoreServiceProvider);
+      final allMaintenances = await firestoreService.getMaintenancesByVehicle(
+        userId,
+        filter.vehicleId,
+      );
 
-    // Filtrage côté client par plage de dates.
-    return allMaintenances.where((m) {
-      if (filter.startDate != null && m.date.isBefore(filter.startDate!)) {
-        return false;
-      }
-      if (filter.endDate != null && m.date.isAfter(filter.endDate!)) {
-        return false;
-      }
-      return true;
-    }).toList();
-  },
-);
+      // Filtrage côté client par plage de dates.
+      return allMaintenances.where((m) {
+        if (filter.startDate != null && m.date.isBefore(filter.startDate!)) {
+          return false;
+        }
+        if (filter.endDate != null && m.date.isAfter(filter.endDate!)) {
+          return false;
+        }
+        return true;
+      }).toList();
+    });
 
 /// Stream réactif des maintenances d'un véhicule (temps réel, sans filtre).
 final maintenancesStreamByVehicleProvider =
-    StreamProvider.family<List<Maintenance>, String>(
-  (ref, vehicleId) {
-    final userId = ref.watch(currentUserIdProvider);
-    if (userId == null) return Stream.value([]);
+    StreamProvider.family<List<Maintenance>, String>((ref, vehicleId) {
+      final userId = ref.watch(currentUserIdProvider);
+      if (userId == null) return Stream.value([]);
 
-    final firestoreService = ref.watch(firestoreServiceProvider);
-    return firestoreService.watchMaintenancesByVehicle(userId, vehicleId);
-  },
-);
+      final firestoreService = ref.watch(firestoreServiceProvider);
+      return firestoreService.watchMaintenancesByVehicle(userId, vehicleId);
+    });
 
 /// Provider asynchrone pour toutes les maintenances du client (tous véhicules).
 final allMaintenancesProvider = FutureProvider<List<Maintenance>>((ref) async {

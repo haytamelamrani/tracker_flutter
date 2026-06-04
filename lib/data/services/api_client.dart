@@ -17,10 +17,8 @@ class ApiClient {
   ///
   /// [baseUrl] — URL de base de l'API (ex: `https://api.example.com/v1`).
   /// [firebaseAuth] — Instance optionnelle pour l'injection de dépendance.
-  ApiClient({
-    required String baseUrl,
-    FirebaseAuth? firebaseAuth,
-  }) : _auth = firebaseAuth ?? FirebaseAuth.instance {
+  ApiClient({required String baseUrl, FirebaseAuth? firebaseAuth})
+    : _auth = firebaseAuth ?? FirebaseAuth.instance {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -54,10 +52,7 @@ class ApiClient {
     // Intercepteur de logging (activé uniquement en mode debug).
     assert(() {
       _dio.interceptors.add(
-        LogInterceptor(
-          requestBody: true,
-          responseBody: true,
-        ),
+        LogInterceptor(requestBody: true, responseBody: true),
       );
       return true;
     }());

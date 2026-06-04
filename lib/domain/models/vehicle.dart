@@ -39,11 +39,11 @@ class Vehicle {
   /// Crée une instance de [Vehicle] à partir d'une [Map] Firestore.
   factory Vehicle.fromMap(Map<String, dynamic> map) {
     return Vehicle(
-      id: map[kVehicleFieldId] as String,
-      marque: map[kVehicleFieldMarque] as String,
-      modele: map[kVehicleFieldModele] as String,
-      annee: map[kVehicleFieldAnnee] as int,
-      immatriculation: map[kVehicleFieldImmatriculation] as String,
+      id: map[kVehicleFieldId]?.toString() ?? '',
+      marque: map[kVehicleFieldMarque]?.toString() ?? 'Inconnu',
+      modele: map[kVehicleFieldModele]?.toString() ?? 'Inconnu',
+      annee: (map[kVehicleFieldAnnee] as num?)?.toInt() ?? 0,
+      immatriculation: map[kVehicleFieldImmatriculation]?.toString() ?? 'N/A',
     );
   }
 
