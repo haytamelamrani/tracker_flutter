@@ -1,0 +1,15 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Règle stricte : un utilisateur ne peut lire et écrire QUE dans son propre chemin /users/{userId}/...
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Par défaut, on bloque tout le reste
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
