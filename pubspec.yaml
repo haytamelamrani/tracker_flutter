@@ -43,6 +43,9 @@ dependencies:
   # HTTP Client
   dio: ^5.8.0+1
 
+  # State Management
+  flutter_riverpod: ^2.6.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
